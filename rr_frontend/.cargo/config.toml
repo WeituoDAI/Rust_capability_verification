@@ -1,0 +1,131 @@
+[build]
+rustflags = [
+    # === ENABLE ALL LINTS ===
+
+    "-Dclippy::complexity",
+    "-Dclippy::correctness",
+    "-Dclippy::nursery",
+    "-Dclippy::pedantic",
+    "-Dclippy::perf",
+    "-Dclippy::restriction",
+    "-Dclippy::style",
+    "-Dclippy::suspicious",
+
+    # === REASONABLE LINTS ===
+
+    # Rust warnings
+    "-Adead_code",
+    "-Aunused_imports",
+    "-Aunused_mut",
+    "-Aunused_variables",
+
+    # clippy::correctness
+    "-Aclippy::unused_io_amount",
+
+    # clippy::nursery
+    "-Aclippy::empty_line_after_doc_comments",
+    "-Aclippy::option_if_let_else",
+
+    # clippy::restriction
+    "-Aclippy::non_ascii_literal",
+    "-Aclippy::panic_in_result_fn",
+    "-Aclippy::unwrap_in_result",
+    "-Aclippy::separated_literal_suffix",
+
+    # clippy::style
+    "-Aclippy::new_without_default",
+    "-Aclippy::write_with_newline",
+
+    # clippy::suspicious
+    "-Aclippy::non_canonical_partial_ord_impl",
+    "-Aclippy::suspicious_doc_comments",
+
+    # === REQUIRE DISCUSSION ===
+
+    # clippy::pedantic
+    "-Aclippy::cast_possible_truncation",
+    "-Aclippy::manual_assert",
+    "-Aclippy::missing_errors_doc",
+    "-Aclippy::missing_panics_doc",
+    "-Aclippy::uninlined_format_args",
+    "-Aclippy::wildcard_imports",
+
+    # clippy::restriction
+    "-Aclippy::arithmetic_side_effects",
+    "-Aclippy::as_conversions",
+    "-Aclippy::clone_on_ref_ptr",
+    "-Aclippy::exit",
+    "-Aclippy::expect_used",
+    "-Aclippy::indexing_slicing",
+    "-Aclippy::missing_assert_message",
+    "-Aclippy::missing_asserts_for_indexing",
+    "-Aclippy::missing_docs_in_private_items",
+    "-Aclippy::panic",
+    "-Aclippy::pattern_type_mismatch",
+    "-Aclippy::print_stderr",
+    "-Aclippy::print_stdout",
+    "-Aclippy::string_slice",
+    "-Aclippy::undocumented_unsafe_blocks",
+    "-Aclippy::unimplemented",
+    "-Aclippy::unnecessary_safety_comment",
+    "-Aclippy::unwrap_used",
+    "-Aclippy::use_debug",
+
+    # === AVOIDABLE LINTS ===
+
+    # clippy::complexity
+    "-Aclippy::too_many_arguments",
+    "-Aclippy::type_complexity",
+
+    # clippy::nursery
+    "-Aclippy::cognitive_complexity",
+
+    # clippy::pedantic
+    "-Aclippy::implicit_hasher",
+    "-Aclippy::many_single_char_names",
+    "-Aclippy::match_wildcard_for_single_variants",
+    "-Aclippy::too_many_lines",
+
+    # clippy::restriction
+    "-Aclippy::default_numeric_fallback",
+    "-Aclippy::else_if_without_else",
+    "-Aclippy::exhaustive_enums",
+    "-Aclippy::exhaustive_structs",
+    "-Aclippy::format_push_string",
+    "-Aclippy::implicit_return",
+    "-Aclippy::integer_division",
+    "-Aclippy::min_ident_chars",
+    "-Aclippy::missing_inline_in_public_items",
+    "-Aclippy::missing_trait_methods",
+    "-Aclippy::question_mark_used",
+    "-Aclippy::shadow_reuse",
+    "-Aclippy::shadow_same",
+    "-Aclippy::shadow_unrelated",
+    "-Aclippy::similar_names",
+    "-Aclippy::single_call_fn",
+    "-Aclippy::single_char_lifetime_names",
+    "-Aclippy::std_instead_of_alloc",
+    "-Aclippy::std_instead_of_core",
+    "-Aclippy::unreachable",
+    "-Aclippy::wildcard_enum_match_arm",
+
+    # clippy::style
+    "-Aclippy::just_underscores_and_digits",
+    "-Aclippy::upper-case-acronyms",
+
+    # === SPECIFIC LINTS ===
+
+    # `clippy::restriction` is enabled globally, but used carefully.
+    "-Aclippy::blanket_clippy_restriction_lints",
+
+    "-Aclippy::mod_module_files", # see: self_named_module_files
+    "-Aclippy::pub_with_shorthand", # see: pub_without_shortand
+    "-Aclippy::semicolon_outside_block", # see: semicolon_inline_block
+]
+
+[unstable.gitoxide]
+checkout = true
+fetch = true
+internal_use_git2 = false
+shallow_deps = true
+shallow_index = true

@@ -1,0 +1,17 @@
+[package]
+name = "radium"
+authors = ["The RefinedRust Developers and Contributors"]
+license = "BSD-3-Clause"
+
+edition.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+derive_more.workspace = true
+from_variants.workspace = true
+indent_write.workspace = true
+indoc.workspace = true
+log.workspace = true
+itertools.workspace = true
+typed-arena.workspace = true

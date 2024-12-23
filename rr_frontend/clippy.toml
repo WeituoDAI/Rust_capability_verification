@@ -1,0 +1,27 @@
+absolute-paths-allowed-crates = [
+  "polonius_engine",
+  "radium",
+  "rrconfig",
+
+  # rustc
+  "abi",
+  "ast",
+  "attr",
+  "borrowck",
+  "data_structures",
+  "driver",
+  "errors",
+  "hir",
+  "index",
+  "infer",
+  "interface",
+  "middle",
+  "serde_json",
+  "session",
+  "span",
+  "target",
+  "trait_selection",
+  "type_ir"
+]
+
+avoid-breaking-exported-api = false

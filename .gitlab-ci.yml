@@ -1,0 +1,115 @@
+# This file expects two variables: `NIX_CI_CACHE_PUB_KEY` and `NIX_CI_CACHE_PRIV_KEY`
+# Those variables can be generated with: `nix-store --generate-binary-cache-key ci_nix_store priv.pem pub.pem`
+
+stages: [ nix-cache, lint, build, tests ]
+
+variables:
+  DEPENDENCIES: ".#theories.inputDerivation .#frontend.inputDerivation .#frontend.cargoArtifacts nixpkgs#gnumake nixpkgs#gnupatch nixpkgs#gnused"
+  NIX_STORE_ARTIFACTS_PATH: ".ci_nix_artifacts"
+  NIX_STORE_CACHE_PATH: ".ci_nix_cache"
+
+default:
+  image: nixos/nix:2.21.2
+  interruptible: true
+  tags: [ fp ]
+
+  before_script:
+   - echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+   - echo "substituters = file://$(pwd)/${NIX_STORE_ARTIFACTS_PATH} file://$(pwd)/${NIX_STORE_CACHE_PATH} https://cache.nixos.org" >> /etc/nix/nix.conf
+   - echo "trusted-public-keys = ${NIX_CI_CACHE_PUB_KEY} cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=" >> /etc/nix/nix.conf
+
+   # Since the cache is not guaranteed to be available, it is preferable to build the dependencies for each job (which is no-op if the cache is available)
+   - nix build --print-build-logs ${DEPENDENCIES}
+
+  cache: &nix_cache
+    key:
+      files: [ flake.lock, flake.nix ]
+    paths: [ "${NIX_STORE_CACHE_PATH}" ]
+    policy: pull
+
+
+.build_to_cache:
+  cache:
+    <<: *nix_cache
+    policy: pull-push
+
+  script:
+   - nix build --print-build-logs ${NIX_DERIVATION}
+   - nix store sign --key-file <(echo "${NIX_CI_CACHE_PRIV_KEY}") --recursive ${NIX_DERIVATION}
+   - nix copy --to "file://$(pwd)/${NIX_STORE_CACHE_PATH}" ${NIX_DERIVATION}
+
+.build_to_artifacts:
+  artifacts:
+    paths: [ "${NIX_STORE_ARTIFACTS_PATH}" ]
+    when: always
+
+  script:
+   - !reference [ .build_to_cache, script ]
+
+   # To avoid generating large `artifacts` without cluttering the `cache`, an overlay on top of the nix store must be used.
+   # So, one of the following solutions can be used:
+   #  1. Using the `local-overlay` feature, but still in RFC (https://github.com/NixOS/rfcs/pull/152)
+   #  2. Using OverlayFS, but SYS_ADMIN capability is required
+   #  3. Moving files around, which is not the best way to do
+   - mkdir -p "${NIX_STORE_ARTIFACTS_PATH}/nar"
+   - nix path-info ${NIX_DERIVATION} | xargs -r basename -a | cut -d'-' -f1 | xargs -r printf -- "${NIX_STORE_CACHE_PATH}/%s.narinfo\0" | xargs -r0 mv -v -t "${NIX_STORE_ARTIFACTS_PATH}" || true
+   - find "${NIX_STORE_ARTIFACTS_PATH}" -name "*.narinfo" -type f -print0 | xargs -r0 grep -oPh "(?<=URL:\ ).*" | xargs -r printf -- "${NIX_STORE_CACHE_PATH}/%s\0" | xargs -r0 mv -v -t ${NIX_STORE_ARTIFACTS_PATH}/nar || true
+
+
+nix-cache:
+  stage: nix-cache
+  variables:
+    NIX_DERIVATION: ${DEPENDENCIES}
+  extends: .build_to_cache
+
+clippy:
+  stage: lint
+  needs: [ "nix-cache" ]
+  script:
+   - cd rr_frontend
+   - nix develop -c cargo clippy --all-targets --all-features --no-deps
+
+fmt:
+  stage: lint
+  needs: [ "nix-cache" ]
+  script:
+   - cd rr_frontend
+   - nix develop -c cargo fmt --check
+
+theories:
+  stage: build
+  needs: [ "nix-cache" ]
+  variables:
+    NIX_DERIVATION: .#theories
+  extends: .build_to_artifacts
+
+frontend:
+  stage: build
+  needs: [ "nix-cache" ]
+  variables:
+    NIX_DERIVATION: .#frontend
+  extends: .build_to_artifacts
+
+stdlib:
+  stage: build
+  needs: [ "theories", "frontend" ]
+  variables:
+    NIX_DERIVATION: .#stdlib
+  extends: .build_to_artifacts
+
+frontend-tests:
+  stage: tests
+  needs: [ "frontend" ]
+  script:
+   - cd rr_frontend
+   - nix develop -c cargo test
+
+case_studies:
+  stage: tests
+  needs: [ "stdlib" ]
+  script:
+   - nix shell -c nix run nixpkgs#gnumake -- setup-nix
+   - nix shell -c nix run nixpkgs#gnumake -- generate_stdlib
+   - nix shell -c nix run nixpkgs#gnumake -- generate_case_studies
+   - cd case_studies
+   - nix shell -c dune build --display=short

@@ -1,0 +1,30 @@
+[package]
+name = "refinedrust_frontend"
+authors = ["ETH Zurich", "The RefinedRust Developers and Contributors"]
+license = "MPL-2.0 AND BSD-3-Clause"
+
+edition.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[[bin]]
+name = "refinedrust-rustc"
+test = false
+doctest = false
+
+[[bin]]
+name = "cargo-refinedrust"
+test = false
+doctest = false
+
+[dependencies]
+rr_rustc_interface.workspace = true
+rrconfig.workspace = true
+translation.workspace = true
+
+log.workspace = true
+env_logger.workspace = true
+shlex.workspace = true
+
+[package.metadata.rust-analyzer]
+rustc_private = true

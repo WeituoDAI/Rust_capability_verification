@@ -1,0 +1,30 @@
+[package]
+name = "translation"
+authors = ["ETH Zurich", "The RefinedRust Developers and Contributors"]
+license = "MPL-2.0 AND BSD-3-Clause"
+
+edition.workspace = true
+repository.workspace = true
+version.workspace = true
+
+[dependencies]
+attribute_parse.workspace = true
+radium.workspace = true
+rr_rustc_interface.workspace = true
+rrconfig.workspace = true
+
+analysis.workspace = true
+derive_more.workspace = true
+csv.workspace = true
+datafrog.workspace = true
+lazy_static.workspace = true
+log.workspace = true
+regex.workspace = true
+rustc-hash.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+topological-sort.workspace = true
+typed-arena.workspace = true
+
+[package.metadata.rust-analyzer]
+rustc_private = true

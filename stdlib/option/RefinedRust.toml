@@ -1,0 +1,2 @@
+extra_specs = "extra_specs.v"
+generate_dune_project = false

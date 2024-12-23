@@ -1,0 +1,27 @@
+# RefinedRust core
+-Q _build/default/theories/lithium lithium
+-Q _build/default/theories/caesium caesium
+-Q _build/default/theories/rust_typing refinedrust
+
+
+
+-Q _build/default/stdlib/option/target/verify/option stdlib.option.option
+-Q _build/default/stdlib/alloc/target/verify/alloc/generated stdlib.alloc.alloc.generated
+-Q _build/default/stdlib/alloc/theories stdlib.alloc.theories
+-Q _build/default/stdlib/vec/target/verify/vec stdlib.alloc.vec
+-Q _build/default/stdlib/closures/output/closures/generated stdlib.closures.closures.generated
+-Q _build/default/stdlib/closures/theories stdlib.closures.theories
+
+
+-Q _build/default/stdlib/btreemap/target/verify/btreemap stdlib.btreemap.btreemap
+-Q _build/default/stdlib/ptr/output/ptr stdlib.ptr.ptr
+
+
+
+-Q _build/default/case_studies/extra_proofs refinedrust.extra_proofs
+-Q _build/default/case_studies/paper_examples/output/paper_examples refinedrust.examples.paper_examples
+-Q _build/default/case_studies/tests/output/tests refinedrust.examples.tests
+-Q _build/default/case_studies/minivec/output/minivec refinedrust.examples.minivec
+-Q _build/default/case_studies/evenint/output/evenint refinedrust.examples.evenint
+-Q _build/default/case_studies/cap/output/cap refinedrust.examples.cap
+-Q _build/default/case_studies/test_simpl/output/test_simpl refinedrust.examples.test_simpl
